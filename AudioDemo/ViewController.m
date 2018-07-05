@@ -13,14 +13,19 @@
 #import "WaveView.h"
 
 @interface ViewController ()<AVAudioPlayerDelegate>
+//音频图谱
 @property (weak, nonatomic) IBOutlet WaveView *waveView;
+//播放按钮
 @property (weak, nonatomic) IBOutlet UIButton *playerBtn;
-
+//录音按钮
 @property (weak, nonatomic) IBOutlet UIButton *recoderBtn;
+
 @property (nonatomic, strong) AVAudioRecorder * recorder;
-@property (strong, nonatomic)AVAudioPlayer * player;
+@property (strong, nonatomic) AVAudioPlayer * player;
+
 @property (nonatomic, strong) NSTimer * recoderTimer;
 @property (nonatomic, strong) NSTimer * playerTimer;
+
 @property (weak, nonatomic) IBOutlet UILabel *powerChannel;
 @end
 
@@ -29,6 +34,7 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
 }
+
 -(AVAudioRecorder *)recorder
 {
   if (!_recorder) {
@@ -50,13 +56,15 @@
 -(AVAudioPlayer *)player
 {
   if (!_player) {
+    //设置录音的音频路径
 //    NSString * path = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/record"];
-    
+    //设置本地音频路径
     NSString * path = [[NSBundle mainBundle] pathForResource:@"music" ofType:@"mp3"];
 
     _player = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:path] error:nil];
     _player.meteringEnabled = YES;
     _player.delegate = self;
+    //设置AVAudioSession，若不设置录音后播放没有声音，AVAudioSession就是用来管理多个APP对音频硬件设备（麦克风，扬声器）的资源使用
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     NSError *err = nil;
     [audioSession setCategory :AVAudioSessionCategoryPlayback error:&err];
@@ -96,9 +104,11 @@
     self.player = nil;
     sender.selected = NO;
     [_playerTimer invalidate];
+    _playerTimer = nil;
   }
 }
 
+//timer 调用的方法
 - (void)recoderLevelTimerCallback:(NSTimer *)timer {
   [self.recorder updateMeters];
   float  decibels = [self.recorder averagePowerForChannel:0];
@@ -112,10 +122,9 @@
   [self levelWithDecibels:decibels];
 }
 
+//获取level
 -(float)levelWithDecibels:(float)decibels
 {
-
-  
   float   level;                // The linear 0.0 .. 1.0 value we need.
   float   minDecibels = -80.0f; // Or use -60dB, which I measured in a silent room.
   if (decibels < minDecibels)
@@ -145,11 +154,6 @@
 
 
 
-
-
-
-
-
 #pragma mark -AVAudioPlayerDelegate
 
 /* AVAudioPlayer INTERRUPTION NOTIFICATIONS ARE DEPRECATED - Use AVAudioSession instead. */
@@ -162,6 +166,7 @@
   self.playerBtn.selected  =NO;
   self.player = nil;
   [_playerTimer invalidate];
+  _playerTimer = nil;
 }
 
 
