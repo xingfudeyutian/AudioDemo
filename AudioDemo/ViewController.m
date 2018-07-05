@@ -40,13 +40,12 @@
   if (!_recorder) {
     NSString * path = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/record"];
     NSMutableDictionary * settingDic = [[NSMutableDictionary alloc] init];
-    [settingDic setValue:[NSNumber numberWithInt:44100] forKey:AVSampleRateKey];
-    [settingDic setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];
-    [settingDic setValue:[NSNumber numberWithInt:1] forKey:AVNumberOfChannelsKey];
-    [settingDic setValue:[NSNumber numberWithInt:AVAudioQualityHigh] forKey:AVEncoderAudioQualityKey];
+    [settingDic setValue:[NSNumber numberWithInt:44100] forKey:AVSampleRateKey];//设置录音采样率(Hz)
+    [settingDic setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];//设置录音格式
+    [settingDic setValue:[NSNumber numberWithInt:1] forKey:AVNumberOfChannelsKey]; //录音通道数  1 或 2
+    [settingDic setValue:[NSNumber numberWithInt:AVAudioQualityHigh] forKey:AVEncoderAudioQualityKey];//录音的质量
     _recorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPath:path] settings:settingDic error:nil];
     _recorder.meteringEnabled = YES;
-
     [_recorder prepareToRecord];
 
   }
